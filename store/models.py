@@ -1,4 +1,6 @@
 from django.db import models
+from django.core.validators import MinValueValidator
+
 
 # Create your models here.
 class Category(models.Model):
@@ -56,3 +58,40 @@ class Order(models.Model):
 
     def __str__(self):
         return self.order_number
+
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
+    product = models.ForeignKey(Product, on_delete=models.PROTECT, related_name='order_items')
+    product_name_snapshot = models.CharField(max_length=50)
+    unit_price = models.DecimalField(max_digits=10, decimal_places=2)
+    quantity = models.PositiveIntegerField(validators=[MinValueValidator(1)])
+    line_total = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"{self.product_name_snapshot} (X{self.quantity})"
+
+class DeliverySetting(models.Model):
+    fee = models.DecimalField(max_digits=10, decimal_places=2)
+    active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"Delivery Fee: {self.fee} (Active)"
+
+class Notification(models.Model):
+    class Channel(models.TextChoices):
+            WHATSAPP = "WHATSAPP", "WhatsApp"
+            EMAIL = "EMAIL", "Email"
+            SMS = "SMS", "SMS"
+    class Status(models.TextChoices):
+                PENDING = "PENDING", "Pending"
+                SENT = "SENT", "Sent"
+                FAILED = "FAILED", "Failed"
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="notifications")
+    channel = models.CharField(max_length=20, choices=Channel.choices, default=Channel.WHATSAPP)
+    recipient = models.CharField(max_length=100)
+    message = models.TextField(max_length=300)
+    status = models.CharField(max_length=20, choices=Status.choices, default=Status.PENDING)
+    sent_at = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+         return self.channel
