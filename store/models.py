@@ -94,4 +94,4 @@ class Notification(models.Model):
     sent_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
-         return self.channel
+        return self.channel
