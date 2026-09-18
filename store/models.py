@@ -71,6 +71,7 @@ class OrderItem(models.Model):
         return f"{self.product_name_snapshot} (X{self.quantity})"
 
 class DeliverySetting(models.Model):
+    location = models.CharField(max_length=50, unique=True)
     fee = models.DecimalField(max_digits=10, decimal_places=2)
     active = models.BooleanField(default=True)
 
