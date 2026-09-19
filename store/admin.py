@@ -23,11 +23,12 @@ admin.site.register(DeliverySetting)
 class OrderItemInline(admin.TabularInline):
     model = OrderItem
     extra = 0
+    readonly_fields = (
+        "product_name_snapshot",
+        "unit_price",
+        "line_total",
+    )
 
-class OrderAdmin(admin.ModelAdmin):
-    inlines = [OrderItemInline]
-
-admin.site.register(Order, OrderAdmin)
 
 class OrderAdmin(admin.ModelAdmin):
     list_display = (
@@ -38,4 +39,19 @@ class OrderAdmin(admin.ModelAdmin):
         "status",
         "created_at",
     )
+    readonly_fields = (
+        "order_number",
+        "customer_name",
+        "phone",
+        "address",
+        "subtotal",
+        "delivery_fee",
+        "total",
+        "created_at",
+        "updated_at",
+    )
+    search_fields = ("order_number", "customer_name")
+    list_filter = ("status",)
     inlines = [OrderItemInline]
+
+admin.site.register(Order, OrderAdmin)
