@@ -1,5 +1,6 @@
 from orders.validate_phone import normalize_phone
 from orders.exceptions import OrderCreationError
+from store.models import Product
 
 def create_order(
     *,
@@ -53,13 +54,28 @@ def create_order(
 
             if product_id is not None and product_id in validated_cart:
                 entry_errors.append(
-                    f"Duplicate product ID (conflicts with another entry normalized to {product_id})"
+                    f"Duplicate product ID"
                 )
 
             if entry_errors:
                 cart_errors[raw_id] = "; ".join(entry_errors)
             else:
                 validated_cart[product_id] = quantity
+
+        
+        if validated_cart:
+            products_by_id = Product.objects.in_bulk(validated_cart.keys())
+
+            for product_id in validated_cart:
+                product = products_by_id.get(product_id)
+
+                if product is None:
+                    cart_errors[product_id] = "Product does not exist"
+                    continue
+
+                if not product.available:
+                    cart_errors[product_id] = "Product is not available"
+                    continue
 
         if cart_errors:
             errors["cart"] = cart_errors
