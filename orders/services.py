@@ -1,6 +1,7 @@
 from orders.validate_phone import normalize_phone
 from orders.exceptions import OrderCreationError
 from store.models import Product
+from decimal import Decimal
 
 def create_order(
     *,
@@ -11,6 +12,7 @@ def create_order(
     notes,
     cart
     ):
+   subtotal = Decimal("0.00")
    """
     Creates an order from checkout information and cart data.
     Validates the supplied checkout data and cart.
@@ -62,9 +64,10 @@ def create_order(
             else:
                 validated_cart[product_id] = quantity
 
-        
         if validated_cart:
             products_by_id = Product.objects.in_bulk(validated_cart.keys())
+
+            calculated_items = {}
 
             for product_id in validated_cart:
                 product = products_by_id.get(product_id)
@@ -76,9 +79,20 @@ def create_order(
                 if not product.available:
                     cart_errors[product_id] = "Product is not available"
                     continue
-
+                quantity = validated_cart[product_id]
+                line_total = quantity * product.price
+                calculated_items[product_id] = {
+                    "product": product,
+                    "quantity": quantity,
+                    "line_total": line_total,
+                }
+            for item in calculated_items.values():
+                subtotal += item["line_total"]
+                    
         if cart_errors:
             errors["cart"] = cart_errors
 
    if errors:
         raise OrderCreationError(errors)
+   return subtotal
+
