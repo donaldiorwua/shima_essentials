@@ -22,6 +22,13 @@ class Product(models.Model):
     available = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    class Meta:
+        constraints = [
+            models.CheckConstraint(
+                condition=models.Q(price__gte=0),
+                name="price_non_negative",
+            )  
+        ]
 
     def __str__(self):
         return self.name
@@ -48,6 +55,7 @@ class Order(models.Model):
     customer_name = models.CharField(max_length=100)
     phone = models.CharField(max_length=15)
     address = models.TextField(max_length=150)
+    delivery_location = models.CharField(max_length=50)
     notes = models.TextField()
     subtotal = models.DecimalField(max_digits=10, decimal_places=2)
     delivery_fee = models.DecimalField(max_digits=10, decimal_places=2)
@@ -55,7 +63,25 @@ class Order(models.Model):
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.PENDING)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
+    class Meta:
+            constraints = [
+                models.CheckConstraint(
+                    condition=models.Q(subtotal__gte=0),
+                    name="subtotal_non_negative",
+                ),
+                models.CheckConstraint(
+                    condition=models.Q(delivery_fee__gte=0),
+                    name="delivery_fee_non_negative",
+                ),
+                models.CheckConstraint(
+                    condition=models.Q(total__gte=0),
+                    name="total_non_negative",
+                ),
+                models.CheckConstraint(
+                    condition=models.Q(total=models.F("subtotal") + models.F("delivery_fee")),
+                    name="total_matches_breakdown",
+                ),
+            ]
     def __str__(self):
         return self.order_number
 
@@ -63,9 +89,24 @@ class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
     product = models.ForeignKey(Product, on_delete=models.PROTECT, related_name='order_items')
     product_name_snapshot = models.CharField(max_length=50)
-    unit_price = models.DecimalField(max_digits=10, decimal_places=2)
+    unit_price = models.DecimalField(max_digits=10, decimal_places=2,)
     quantity = models.PositiveIntegerField(validators=[MinValueValidator(1)])
     line_total = models.DecimalField(max_digits=10, decimal_places=2)
+    class Meta:
+        constraints = [
+            models.CheckConstraint(
+                condition=models.Q(unit_price__gte=0),
+                name="unit_price_non_negative",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(line_total__gte=0),
+                name="line_total_non_negative",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(line_total=models.F("unit_price") * models.F("quantity")),
+                name="line_total_matches_quantity",
+            ),
+        ]
 
     def __str__(self):
         return f"{self.product_name_snapshot} (X{self.quantity})"
@@ -74,6 +115,13 @@ class DeliverySetting(models.Model):
     location = models.CharField(max_length=50, unique=True)
     fee = models.DecimalField(max_digits=10, decimal_places=2)
     active = models.BooleanField(default=True)
+    class Meta:
+        constraints = [
+            models.CheckConstraint(
+                condition=models.Q(fee__gte=0),
+                name="fee_non_negative",
+            )
+        ]
 
     def __str__(self):
         return f"Delivery Fee: {self.fee} (Active)"
