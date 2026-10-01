@@ -23,6 +23,7 @@ def checkout(request):
             }
             try:
                 order = create_order(**order_data)
+                cart.clear()
                 return redirect("order_confirmation", order_number=order.order_number)
             except OrderCreationError as exc:
                 form.add_error(None, str(exc))
