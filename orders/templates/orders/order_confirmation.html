@@ -8,6 +8,21 @@
 
 <p>Your order has been received.</p>
 <p>Order number: {{ order.order_number }}</p>
+<p>Customer: {{ order.customer_name }}</p>
+<p>Delivery location: {{ order.delivery_location }}</p>
+<p>Subtotal: ₦{{ order.subtotal }}</p>
+<p>Delivery fee: ₦{{ order.delivery_fee }}</p>
+<p>Total: ₦{{ order.total }}</p>
+<h2>Order Items</h2>
+
+{% for item in order.items.all %}
+    <p>
+        {{ item.product_name_snapshot }}
+        — ₦{{ item.unit_price }}
+        × {{ item.quantity }}
+        = ₦{{ item.line_total }}
+    </p>
+{% endfor %}
 </body>
 </html>
 

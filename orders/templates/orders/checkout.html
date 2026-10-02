@@ -1,18 +1,44 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Checkout</title>
 </head>
+
 <body>
     <h1>Checkout</h1>
+    <h2>Order Items</h2>
+
+    {% for product, quantity, line_total in products %}
+    <p>
+        {{ product.name }}
+        — ₦{{ product.price }}
+        × {{ quantity }}
+        = ₦{{ line_total }}
+    </p> {% endfor %}
+
+    <p>
+        Subtotal: ₦{{ subtotal }}
+    </p>
+
+    {% if delivery_fee is not None %}
+    <p>
+        Delivery fee: ₦{{ delivery_fee }}
+    </p>
+    {% endif %}
+
+    {% if total is not None %}
+    <p>
+        Total: ₦{{ total }}
+    </p>
+    {% endif %}
 
     <form method="post">
         {% csrf_token %}
-
         {{ form.as_p }}
 
         <button type="submit">Place Order</button>
     </form>
 </body>
-</html>
 
+</html>
