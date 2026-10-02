@@ -1,3 +1,4 @@
+from store.models import Order, Product
 
 class Cart:
     SESSION_KEY = "cart"
