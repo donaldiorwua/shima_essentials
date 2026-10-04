@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Home | SHIMA ESSENTIALS{% endblock %}
+
+{% block content %}
+
+<h1>SHIMA ESSENTIALS</h1>
+
+<p>Style. Taste. Essentials.</p>
+
+<p>Everyday Elegance.</p>
+
+<p>
+    <a href="{% url 'product_list' %}">Browse Products</a>
+<h2>Categories</h2>
+
+{% for category in categories %}
+<p>
+    <a href="{% url 'category_products' category.slug %}">
+        {{ category.name }}
+    </a>
+</p>
+{% empty %}
+<p>No categories are currently available.</p>
+{% endfor %}
+<h2>Available Products</h2>
+
+{% for product in products %}
+<p>
+    <a href="{% url 'product_detail' product.id %}">
+        {{ product.name }}
+    </a>
+    — ₦{{ product.price }}
+</p>
+{% empty %}
+<p>No products are currently available.</p>
+{% endfor %}
+</p>
+
+{% endblock %}
+
