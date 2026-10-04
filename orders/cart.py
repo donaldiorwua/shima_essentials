@@ -58,3 +58,15 @@ class Cart:
             return product_id
         raise ValueError("Product ID must be a positive integer")
 
+    def set_quantity(self, product_id, quantity):
+        product_id = self._normalize_product_id(product_id)
+
+        if quantity < 0:
+            raise ValueError("Quantity cannot be negative")
+
+        if quantity == 0:
+            self.remove(product_id)
+            return
+
+        self.cart[product_id] = quantity
+

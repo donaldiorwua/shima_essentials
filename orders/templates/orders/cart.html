@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Cart | SHIMA ESSENTIALS{% endblock %}
+
+{% block content %}
+
+<h1>Your Cart</h1>
+
+{% for item in items %}
+<div>
+    <h2>{{ item.product.name }}</h2>
+
+    <p>Price: ₦{{ item.product.price }}</p>
+
+    <form method="post" action="{% url 'cart_update' item.product.id %}">
+        {% csrf_token %}
+
+        <label>
+            Quantity:
+            <input type="number" name="quantity" value="{{ item.quantity }}" min="0">
+        </label>
+
+        <button type="submit">Update</button>
+    </form>
+
+    <p>Line total: ₦{{ item.line_total }}</p>
+
+    <form method="post" action="{% url 'cart_remove' item.product.id %}">
+        {% csrf_token %}
+        <button type="submit">Remove</button>
+    </form>
+</div>
+{% empty %}
+<p>Your cart is empty.</p>
+{% endfor %}
+
+<p>Subtotal: ₦{{ subtotal }}</p>
+
+{% endblock %}
+

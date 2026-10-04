@@ -68,4 +68,77 @@ def order_confirmation(request, order_number):
         {"order": order},
     )
 
+def cart_view(request):
+    cart = Cart(request.session)
+    cart_items = cart.get_items()
 
+    products = Product.objects.filter(
+        id__in=cart_items.keys(),
+        available=True,
+    )
+
+    items = []
+    subtotal = Decimal("0.00")
+
+    for product in products:
+        quantity = cart_items[product.id]
+        line_total = product.price * quantity
+        subtotal += line_total
+
+        items.append(
+            {
+                "product": product,
+                "quantity": quantity,
+                "line_total": line_total,
+            }
+        )
+
+    return render(
+        request,
+        "orders/cart.html",
+        {
+            "items": items,
+            "subtotal": subtotal,
+        },
+    )
+
+def cart_add(request, product_id):
+    if request.method != "POST":
+        return redirect("product_detail", product_id=product_id)
+
+    product = get_object_or_404(
+        Product,
+        id=product_id,
+        available=True,
+    )
+
+    cart = Cart(request.session)
+    cart.add(product.id, 1)
+    cart.save()
+
+    return redirect("cart")
+
+def cart_remove(request, product_id):
+    if request.method != "POST":
+        return redirect("cart")
+
+    cart = Cart(request.session)
+    cart.remove(product_id)
+    cart.save()
+
+    return redirect("cart")
+
+def cart_update(request, product_id):
+    if request.method != "POST":
+        return redirect("cart")
+
+    try:
+        quantity = int(request.POST.get("quantity", 0))
+    except (TypeError, ValueError):
+        return redirect("cart")
+
+    cart = Cart(request.session)
+    cart.set_quantity(product_id, quantity)
+    cart.save()
+
+    return redirect("cart")

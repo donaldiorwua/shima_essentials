@@ -1,44 +1,44 @@
-<!DOCTYPE html>
-<html>
+{% extends "base.html" %}
 
-<head>
-    <title>Checkout</title>
-</head>
+{% block title %}Checkout | SHIMA ESSENTIALS{% endblock %}
 
-<body>
-    <h1>Checkout</h1>
-    <h2>Order Items</h2>
+{% block content %}
 
-    {% for product, quantity, line_total in products %}
-    <p>
-        {{ product.name }}
-        — ₦{{ product.price }}
-        × {{ quantity }}
-        = ₦{{ line_total }}
-    </p> {% endfor %}
+<h1>Checkout</h1>
 
-    <p>
-        Subtotal: ₦{{ subtotal }}
-    </p>
+<h2>Order Items</h2>
 
-    {% if delivery_fee is not None %}
-    <p>
-        Delivery fee: ₦{{ delivery_fee }}
-    </p>
-    {% endif %}
+{% for product, quantity, line_total in products %}
+<p>
+    {{ product.name }}
+    — ₦{{ product.price }}
+    × {{ quantity }}
+    = ₦{{ line_total }}
+</p>
+{% endfor %}
 
-    {% if total is not None %}
-    <p>
-        Total: ₦{{ total }}
-    </p>
-    {% endif %}
+<p>
+    Subtotal: ₦{{ subtotal }}
+</p>
 
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
+{% if delivery_fee is not None %}
+<p>
+    Delivery fee: ₦{{ delivery_fee }}
+</p>
+{% endif %}
 
-        <button type="submit">Place Order</button>
-    </form>
-</body>
+{% if total is not None %}
+<p>
+    Total: ₦{{ total }}
+</p>
+{% endif %}
 
-</html>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <button type="submit">Place Order</button>
+</form>
+
+{% endblock %}
+
