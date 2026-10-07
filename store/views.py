@@ -59,3 +59,14 @@ def home(request):
             "categories": categories,
         },
     )
+def contact(request):
+    return render(
+        request,
+        "store/contact.html",
+    )
+
+def about(request):
+    return render(
+        request,
+        "store/about.html",
+    )
