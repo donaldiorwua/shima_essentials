@@ -11,6 +11,9 @@
 {% endif %}
 {% for product in products %}
 <div>
+    {% if product.image %}
+    <img src="{{ product.image.url }}" alt="{{ product.name }}">
+    {% endif %}
     <h2>{{ product.name }}</h2>
 
     <p>{{ product.description }}</p>

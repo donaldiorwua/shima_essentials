@@ -11,6 +11,13 @@
 <p>Everyday Elegance.</p>
 
 <p>
+    I believe you deserve the best both in taste and style.
+    whether you are ordering a delicious cake, a satisfying meal, a refreshing drink, a beautiful bag or elegant  shoe. 
+    We committed to delivering quality, value and excellent to customer service .
+    Your satisfaction is my joy.
+</p>
+
+<p>
     <a href="{% url 'product_list' %}">Browse Products</a>
 <h2>Categories</h2>
 
@@ -26,12 +33,21 @@
 <h2>Available Products</h2>
 
 {% for product in products %}
-<p>
-    <a href="{% url 'product_detail' product.id %}">
-        {{ product.name }}
-    </a>
-    — ₦{{ product.price }}
-</p>
+    <div>
+        {% if product.image %}
+            <img
+                src="{{ product.image.url }}"
+                alt="{{ product.name }}"
+            >
+        {% endif %}
+
+        <p>
+            <a href="{% url 'product_detail' product.id %}">
+                {{ product.name }}
+            </a>
+            — ₦{{ product.price }}
+        </p>
+    </div>
 {% empty %}
 <p>No products are currently available.</p>
 {% endfor %}
