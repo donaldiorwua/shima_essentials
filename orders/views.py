@@ -6,11 +6,16 @@ from .forms import CheckoutForm
 from .services import create_order
 from decimal import Decimal
 from store.models import DeliverySetting
+from orders.whatsapp import build_whatsapp_url
+from django.conf import settings
+from django.contrib import messages
 
 
 def checkout(request):
     cart = Cart(request.session)
     cart_items = cart.get_items()
+    if not cart_items:
+        return redirect("cart")
     products = []
     subtotal = Decimal("0.00")
     for product in Product.objects.filter(id__in=cart_items.keys()):
@@ -60,13 +65,24 @@ def checkout(request):
         },
     )
 
+
 def order_confirmation(request, order_number):
     order = get_object_or_404(Order, order_number=order_number)
+
+    whatsapp_url = build_whatsapp_url(
+        order,
+        settings.WHATSAPP_BUSINESS_NUMBER,
+    )
+
     return render(
         request,
         "orders/order_confirmation.html",
-        {"order": order},
+        {
+            "order": order,
+            "whatsapp_url": whatsapp_url,
+        },
     )
+
 
 def cart_view(request):
     cart = Cart(request.session)
@@ -115,6 +131,10 @@ def cart_add(request, product_id):
     cart = Cart(request.session)
     cart.add(product.id, 1)
     cart.save()
+    messages.success(
+        request,
+        f"{product.name} added to your cart.",
+    )
 
     return redirect("cart")
 
@@ -142,3 +162,4 @@ def cart_update(request, product_id):
     cart.save()
 
     return redirect("cart")
+
