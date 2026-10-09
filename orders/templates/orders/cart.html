@@ -35,6 +35,13 @@
 {% endfor %}
 
 <p>Subtotal: ₦{{ subtotal }}</p>
+<p>
+    <a href="{% url 'product_list' %}">Continue Shopping</a>
+</p>
+{% if items %}
+<p>
+    <a href="{% url 'checkout' %}">Proceed to Checkout</a>
+</p>
+{% endif %}
 
 {% endblock %}
-
