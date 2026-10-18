@@ -27,11 +27,3 @@ with patch(
     "orders.order_number.Order.objects.filter"
 ) as mock_filter:
     mock_filter.return_value.exists.side_effect = [True, False]
-
-Order.objects.filter(
-    order_number__in=[
-        "SE-260924-PEZEV9",
-        "SE-260924-5UO94P",
-        "SE-260924-83LPKT",
-    ]
-).delete()
