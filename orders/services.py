@@ -55,6 +55,10 @@ def create_order(
         errors["cart"] = "Cart must be a dictionary"
    elif not cart:
         errors["cart"] = "Cart cannot be empty"
+
+   if errors:
+        raise OrderCreationError(errors)
+
    
    cart_errors = {}
    validated_cart = {}
@@ -126,10 +130,10 @@ def create_order(
             location=delivery_location,
         ).first()
 
-        if delivery_setting is None:
-            errors["delivery_location"] = "Delivery is not available for this location"
-        elif not delivery_setting.active:
-            errors["delivery_location"] = "Delivery is not available for this location"
+        if delivery_setting is None or not delivery_setting.active:
+            errors["delivery_location"] = (
+                "Delivery is not available for this location"
+            )
         if errors:
             raise OrderCreationError(errors)
         

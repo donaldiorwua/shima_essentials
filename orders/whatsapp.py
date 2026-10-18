@@ -1,6 +1,6 @@
 from urllib.parse import quote
 
-def build_whatsapp_message(order):
+def build_whatsapp_message(order, receipt_url=None):
     lines = [
         "SHIMA ESSENTIALS ORDER",
         "",
@@ -34,12 +34,18 @@ def build_whatsapp_message(order):
                 f"Notes: {order.notes}",
             ]
         )
+    if receipt_url:
+        lines.extend(
+            [
+                "",
+                f"PDF receipt: {receipt_url}",
+            ]
+        )
 
     return "\n".join(lines)
 
-
-def build_whatsapp_url(order, phone_number):
-    message = build_whatsapp_message(order)
+def build_whatsapp_url(order, phone_number, receipt_url=None):
+    message = build_whatsapp_message(order, receipt_url=receipt_url)
     encoded_message = quote(message)
 
     return f"https://wa.me/{phone_number}?text={encoded_message}"

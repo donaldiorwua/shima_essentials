@@ -9,7 +9,7 @@ class Cart:
         self.cart = {
             self._normalize_product_id(product_id): quantity
             for product_id, quantity in raw_cart.items()
-}
+        }
 
     def add(self, product_id, quantity=1):
         product_id = self._normalize_product_id(product_id)

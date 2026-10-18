@@ -4,11 +4,17 @@ from .exceptions import OrderCreationError
 from .cart import Cart
 from .forms import CheckoutForm
 from .services import create_order
+from django.http import HttpResponse
+from orders.pdf import generate_order_pdf
+from orders.receipt_links import verify_receipt_token
 from decimal import Decimal
+from orders.receipt_links import build_receipt_url
 from store.models import DeliverySetting
 from orders.whatsapp import build_whatsapp_url
 from django.conf import settings
 from django.contrib import messages
+from django.db import transaction
+from orders.email_notifications import safely_send_order_email
 
 
 def checkout(request):
@@ -47,8 +53,14 @@ def checkout(request):
             }
             try:
                 order = create_order(**order_data)
+                transaction.on_commit(
+                    lambda: safely_send_order_email(order)
+                )
                 cart.clear()
-                return redirect("order_confirmation", order_number=order.order_number)
+                return redirect(
+                    "order_confirmation",
+                    order_number=order.order_number,
+                )
             except OrderCreationError as exc:
                 form.add_error(None, str(exc))
 
@@ -65,13 +77,21 @@ def checkout(request):
         },
     )
 
-
 def order_confirmation(request, order_number):
     order = get_object_or_404(Order, order_number=order_number)
 
-    whatsapp_url = build_whatsapp_url(
-        order,
-        settings.WHATSAPP_BUSINESS_NUMBER,
+    receipt_url = build_receipt_url(order)
+
+    whatsapp_number = settings.WHATSAPP_BUSINESS_NUMBER.strip()
+
+    whatsapp_url = (
+        build_whatsapp_url(
+            order,
+            whatsapp_number,
+            receipt_url=receipt_url,
+        )
+        if whatsapp_number
+        else None
     )
 
     return render(
@@ -80,9 +100,34 @@ def order_confirmation(request, order_number):
         {
             "order": order,
             "whatsapp_url": whatsapp_url,
+            "receipt_url": receipt_url,
         },
     )
 
+
+
+def order_receipt(request, order_number, token):
+    if not verify_receipt_token(token, order_number):
+        return HttpResponse("Receipt link is invalid or expired.", status=404)
+
+    order = get_object_or_404(
+        Order.objects.prefetch_related("items"),
+        order_number=order_number,
+    )
+
+    pdf_bytes = generate_order_pdf(order)
+
+    response = HttpResponse(
+        pdf_bytes,
+        content_type="application/pdf",
+    )
+    response["Content-Disposition"] = (
+        f'attachment; filename="SHIMA-Receipt-{order.order_number}.pdf"'
+    )
+    response["Cache-Control"] = "private, no-store"
+    response["X-Content-Type-Options"] = "nosniff"
+
+    return response
 
 def cart_view(request):
     cart = Cart(request.session)

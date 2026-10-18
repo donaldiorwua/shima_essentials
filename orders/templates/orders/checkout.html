@@ -4,41 +4,78 @@
 
 {% block content %}
 
-<h1>Checkout</h1>
+<section class="checkout-page">
+    <div class="checkout-heading">
+        <p class="eyebrow">ALMOST YOURS</p>
+        <h1>Checkout</h1>
+        <p>Review your order and provide your delivery details.</p>
+    </div>
 
-<h2>Order Items</h2>
+    <div class="checkout-layout">
+        <section class="checkout-summary" aria-labelledby="order-summary-heading">
+            <h2 id="order-summary-heading">Your Order</h2>
 
-{% for product, quantity, line_total in products %}
-<p>
-    {{ product.name }}
-    — ₦{{ product.price }}
-    × {{ quantity }}
-    = ₦{{ line_total }}
-</p>
-{% endfor %}
+            <div class="checkout-items">
+                {% for product, quantity, line_total in products %}
+                    <div class="checkout-item">
+                        <div class="checkout-item-info">
+                            <span class="checkout-product-name">
+                                {{ product.name }}
+                            </span>
+                            <span class="checkout-product-quantity">
+                                ₦{{ product.price|floatformat:2 }} × {{ quantity }}
+                            </span>
+                        </div>
 
-<p>
-    Subtotal: ₦{{ subtotal }}
-</p>
+                        <strong class="checkout-line-total">
+                            ₦{{ line_total|floatformat:2 }}
+                        </strong>
+                    </div>
+                {% empty %}
+                    <p>No items to display.</p>
+                {% endfor %}
+            </div>
 
-{% if delivery_fee is not None %}
-<p>
-    Delivery fee: ₦{{ delivery_fee }}
-</p>
-{% endif %}
+            <div class="checkout-totals">
+                <p>
+                    <span>Subtotal</span>
+                    <strong>₦{{ subtotal|floatformat:2 }}</strong>
+                </p>
 
-{% if total is not None %}
-<p>
-    Total: ₦{{ total }}
-</p>
-{% endif %}
+                {% if delivery_fee is not None %}
+                    <p>
+                        <span>Delivery fee</span>
+                        <strong>₦{{ delivery_fee|floatformat:2 }}</strong>
+                    </p>
+                {% endif %}
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
+                {% if total is not None %}
+                    <p class="checkout-grand-total">
+                        <span>Total</span>
+                        <strong>₦{{ total|floatformat:2 }}</strong>
+                    </p>
+                {% endif %}
+            </div>
 
-    <button type="submit">Place Order</button>
-</form>
+            <p class="checkout-note">
+                Your final order total is calculated and validated by the server.
+            </p>
+        </section>
+
+        <section class="checkout-form-section" aria-labelledby="delivery-heading">
+            <h2 id="delivery-heading">Delivery Details</h2>
+
+            <form class="checkout-form" method="post">
+                {% csrf_token %}
+
+                {{ form.as_p }}
+
+                <button class="button button-primary checkout-submit" type="submit">
+                    Place Order
+                </button>
+            </form>
+        </section>
+    </div>
+</section>
 
 {% endblock %}
-

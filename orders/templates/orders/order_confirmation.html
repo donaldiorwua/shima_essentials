@@ -3,41 +3,101 @@
 {% block title %}Order Confirmation | SHIMA ESSENTIALS{% endblock %}
 
 {% block content %}
+<section class="order-confirmation">
 
-<h1>Order Confirmation</h1>
+    <header class="confirmation-heading">
+        <p class="eyebrow">SHIMA ESSENTIALS</p>
+        <h1>Order Confirmation</h1>
+        <p class="confirmation-intro">
+            Your order has been received. Please keep your order number for reference.
+        </p>
+    </header>
 
-<p>Your order has been received.</p>
+    <section class="order-summary">
+        <h2>Order Summary</h2>
 
-<p>Order number: {{ order.order_number }}</p>
-<p>Customer: {{ order.customer_name }}</p>
-<p>Delivery location: {{ order.delivery_location }}</p>
-<p>Subtotal: ₦{{ order.subtotal }}</p>
-<p>Delivery fee: ₦{{ order.delivery_fee }}</p>
-<p>Total: ₦{{ order.total }}</p>
+        <p>
+            <strong>Order number:</strong>
+            {{ order.order_number }}
+        </p>
+        <p>
+            <strong>Customer:</strong>
+            {{ order.customer_name }}
+        </p>
+        <p>
+            <strong>Delivery location:</strong>
+            {{ order.delivery_location }}
+        </p>
 
-<h2>Order Items</h2>
+        <div class="confirmation-totals">
+            <p>
+                <span>Subtotal</span>
+                <span>₦{{ order.subtotal|floatformat:2 }}</span>
+            </p>
+            <p>
+                <span>Delivery fee</span>
+                <span>₦{{ order.delivery_fee|floatformat:2 }}</span>
+            </p>
+            <p class="confirmation-grand-total">
+                <strong>Total</strong>
+                <strong>₦{{ order.total|floatformat:2 }}</strong>
+            </p>
+        </div>
+    </section>
 
-{% for item in order.items.all %}
-<p>
-    {{ item.product_name_snapshot }}
-    — ₦{{ item.unit_price }}
-    × {{ item.quantity }}
-    = ₦{{ item.line_total }}
-</p>
-{% endfor %}
+    <section class="confirmation-items">
+        <h2>Order Items</h2>
 
+        {% for item in order.items.all %}
+        <div class="confirmation-item">
+            <div>
+                <h3>{{ item.product_name_snapshot }}</h3>
+                <p>
+                    ₦{{ item.unit_price|floatformat:2 }}
+                    × {{ item.quantity }}
+                </p>
+            </div>
+            <p class="confirmation-line-total">
+                ₦{{ item.line_total|floatformat:2 }}
+            </p>
+        </div>
+        {% endfor %}
+    </section>
 
-<p>
-    <a href="{{ whatsapp_url }}" target="_blank" rel="noopener noreferrer">
-        Send order details via WhatsApp
-    </a>
-</p>
+    <section class="confirmation-notifications">
+        <h2>Order Notifications</h2>
 
+        {% if whatsapp_url %}
+        <p>
+            Use WhatsApp to share your order details with the business manager.
+        </p>
+        <a class="button button-primary" href="{{ whatsapp_url }}" target="_blank" rel="noopener noreferrer">
+            Send order details via WhatsApp
+        </a>
+        {% else %}
+        <p class="confirmation-alert" role="alert">
+            WhatsApp notification is not configured.
+            Please contact the business manager to confirm your order.
+        </p>
+        {% endif %}
 
+        {% if receipt_url %}
+        <p class="confirmation-receipt">
+            Your PDF receipt is available through the WhatsApp message link.
+        </p>
+        {% else %}
+        <p class="confirmation-alert" role="alert">
+            A downloadable PDF receipt link is not currently available.
+            Please contact the business manager if you need a PDF copy.
+        </p>
+        {% endif %}
+    </section>
+
+    <div class="confirmation-actions">
+        <a class="button button-secondary" href="{% url 'product_list' %}">
+            Continue Shopping
+        </a>
+    </div>
+
+</section>
 {% endblock %}
-
-response = client.get(
-    f"/checkout/confirmation/{order.order_number}/",
-    HTTP_HOST="localhost",
-)
-

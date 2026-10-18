@@ -26,5 +26,10 @@ urlpatterns = [
         views.cart_update,
         name="cart_update",
     ),
+    path(
+        "orders/<str:order_number>/receipt/<str:token>/",
+        views.order_receipt,
+        name="order_receipt",
+    ),
 ]
 
