@@ -17,13 +17,3 @@ def generate_order_number():
 
         if not Order.objects.filter(order_number=candidate).exists():
             return candidate
-
-from unittest.mock import patch
-
-with patch(
-    "orders.order_number.generate_random_code",
-    side_effect=["ABC123", "XYZ789"]
-), patch(
-    "orders.order_number.Order.objects.filter"
-) as mock_filter:
-    mock_filter.return_value.exists.side_effect = [True, False]
