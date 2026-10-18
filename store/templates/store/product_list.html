@@ -4,31 +4,75 @@
 
 {% block content %}
 
-{% if category %}
-<h1>{{ category.name }}</h1>
-{% else %}
-<h1>Products</h1>
-{% endif %}
-{% for product in products %}
-<div>
-    {% if product.image %}
-    <img src="{{ product.image.url }}" alt="{{ product.name }}">
-    {% endif %}
-    <h2>{{ product.name }}</h2>
+<section class="catalogue">
+    <div class="catalogue-heading">
+        {% if category %}
+            <p class="eyebrow">EXPLORE OUR COLLECTION</p>
+            <h1>{{ category.name }}</h1>
+        {% else %}
+            <p class="eyebrow">STYLE. TASTE. ESSENTIALS.</p>
+            <h1>Discover Our Collection</h1>
+        {% endif %}
 
-    <p>{{ product.description }}</p>
+        <p class="catalogue-intro">
+            Find something special for your everyday moments.
+        </p>
+    </div>
 
-    <p>Price: ₦{{ product.price }}</p>
+    <div class="product-grid">
+        {% for product in products %}
+            <article class="product-card">
+                <a
+                    class="product-image-link"
+                    href="{% url 'product_detail' product.id %}"
+                    aria-label="View {{ product.name }}"
+                >
+                    {% if product.image %}
+                        <img
+                            class="product-image"
+                            src="{{ product.image.url }}"
+                            alt="{{ product.name }}"
+                        >
+                    {% else %}
+                        <div class="product-image-placeholder">
+                            <span>SHIMA ESSENTIALS</span>
+                        </div>
+                    {% endif %}
+                </a>
 
-    <p>
-        <a href="{% url 'product_detail' product.id %}">
-            View Product
-        </a>
-    </p>
-</div>
-{% empty %}
-<p>No products available.</p>
-{% endfor %}
+                <div class="product-card-content">
+                    <h2>
+                        <a
+                            class="product-name"
+                            href="{% url 'product_detail' product.id %}"
+                        >
+                            {{ product.name }}
+                        </a>
+                    </h2>
+
+                    <p class="product-description">
+                        {{ product.description }}
+                    </p>
+
+                    <p class="product-price">
+                        ₦{{ product.price|floatformat:2 }}
+                    </p>
+
+                    <a
+                        class="button button-primary"
+                        href="{% url 'product_detail' product.id %}"
+                    >
+                        View Product
+                    </a>
+                </div>
+            </article>
+        {% empty %}
+            <div class="empty-state">
+                <h2>No products available yet</h2>
+                <p>Please check back soon for something special.</p>
+            </div>
+        {% endfor %}
+    </div>
+</section>
 
 {% endblock %}
-

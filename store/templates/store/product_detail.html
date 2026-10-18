@@ -4,26 +4,51 @@
 
 {% block content %}
 
-<h1>{{ product.name }}</h1>
+<section class="product-detail">
+    <div class="product-detail-image-column">
+        {% if product.image %}
+            <div class="product-detail-image-wrapper">
+                <img
+                    class="product-detail-image"
+                    src="{{ product.image.url }}"
+                    alt="{{ product.name }}"
+                >
+            </div>
+        {% else %}
+            <div class="product-detail-placeholder">
+                SHIMA ESSENTIALS
+            </div>
+        {% endif %}
+    </div>
 
-{% if product.image %}
-<img src="{{ product.image.url }}" alt="{{ product.name }}">
-{% endif %}
+    <div class="product-detail-info">
+        <p class="eyebrow">SHIMA ESSENTIALS</p>
 
-<p>{{ product.description }}</p>
+        <h1>{{ product.name }}</h1>
 
-<p>Price: ₦{{ product.price }}</p>
+        <p class="product-detail-category">
+            Category: {{ product.category.name }}
+        </p>
 
-<p>Category: {{ product.category.name }}</p>
+        <p class="product-detail-price">
+            ₦{{ product.price|floatformat:2 }}
+        </p>
 
-<form method="post" action="{% url 'cart_add' product.id %}">
-    {% csrf_token %}
-    <button type="submit">Add to Cart</button>
-</form>
+        <div class="product-detail-description">
+            {{ product.description|linebreaks }}
+        </div>
 
-<p>
-    <a href="{% url 'cart' %}">View Cart</a>
-</p>
+        <form method="post" action="{% url 'cart_add' product.id %}">
+            {% csrf_token %}
+            <button class="button button-primary" type="submit">
+                Add to Cart
+            </button>
+        </form>
+
+        <a class="product-detail-cart-link" href="{% url 'cart' %}">
+            View Cart
+        </a>
+    </div>
+</section>
 
 {% endblock %}
-

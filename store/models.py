@@ -141,6 +141,7 @@ class Notification(models.Model):
     message = models.TextField(max_length=300)
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.PENDING)
     sent_at = models.DateTimeField(null=True, blank=True)
+    error_message = models.TextField(blank=True)
 
     def __str__(self):
         return self.channel

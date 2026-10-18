@@ -5,7 +5,8 @@ from .models import (
     Customer, 
     DeliverySetting,
     Order,
-    OrderItem
+    OrderItem,
+    Notification
 )
 
 admin.site.register(Category)
@@ -56,3 +57,31 @@ class OrderAdmin(admin.ModelAdmin):
 
 admin.site.register(Order, OrderAdmin)
 
+
+@admin.register(Notification)
+class NotificationAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "order",
+        "channel",
+        "recipient",
+        "status",
+        "sent_at",
+    )
+    list_filter = ("channel", "status", "sent_at")
+    search_fields = (
+        "order__order_number",
+        "recipient",
+        "message",
+        "error_message",
+    )
+    readonly_fields = (
+        "order",
+        "channel",
+        "recipient",
+        "message",
+        "status",
+        "sent_at",
+        "error_message",
+    )
+    ordering = ("-id",)

@@ -1,22 +1,39 @@
+
 {% extends "base.html" %}
 
 {% block title %}About | SHIMA ESSENTIALS{% endblock %}
 
 {% block content %}
 
-<h1>About SHIMA ESSENTIALS</h1>
+<section class="about-page">
+    <header class="about-hero">
+        <p class="eyebrow">Our Story</p>
+        <h1>About SHIMA ESSENTIALS</h1>
+        <p class="about-tagline">Style. Taste. Essentials.</p>
+    </header>
 
-<p>
-    SHIMA ESSENTIALS brings together style, taste, and everyday essentials
-    in one convenient place.
-</p>
+    <div class="about-content">
+        <p class="about-lead">
+            SHIMA ESSENTIALS brings together style, taste, and everyday
+            essentials in one convenient place.
+        </p>
 
-<p>
-    Our goal is to make quality products easy to discover and order.
-</p>
+        <p>
+            Our goal is to make quality products easy to discover and order.
+            From delicious treats and refreshing drinks to style and everyday
+            essentials, we aim to make your shopping experience convenient.
+        </p>
 
-<p>
-    <strong>Everyday Elegance.</strong>
-</p>
+        <div class="about-motto">
+            <p>Everyday Elegance.</p>
+        </div>
+    </div>
+
+    <div class="about-action">
+        <a class="button button-primary" href="{% url 'product_list' %}">
+            Explore Our Products
+        </a>
+    </div>
+</section>
 
 {% endblock %}

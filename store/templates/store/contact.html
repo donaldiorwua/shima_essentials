@@ -1,23 +1,44 @@
+
 {% extends "base.html" %}
 
 {% block title %}Contact | SHIMA ESSENTIALS{% endblock %}
 
 {% block content %}
 
-<h1>Contact SHIMA ESSENTIALS</h1>
+<section class="contact-page">
+    <header class="contact-heading">
+        <p class="eyebrow">We're here for you</p>
+        <h1>Contact SHIMA ESSENTIALS</h1>
+        <p class="contact-intro">
+            We'd love to hear from you. Have a question about our cakes,
+            meals, drinks, or other essentials? Get in touch with us.
+        </p>
+    </header>
 
-<p>We'd love to hear from you.</p>
+    <div class="contact-cards">
 
-<p>
-    <strong>Location:</strong> Vandeikya Street, High Level, Makurdi 970101, Benue, Nigeria
-</p>
+        <article class="contact-card">
+            <h2>Visit Us</h2>
+            <p>Vandeikya Street, High Level, Makurdi 970101, Benue, Nigeria</p>
+        </article>
 
-<p>
-    <strong>Phone:</strong> +2347036203666
-</p>
+        <article class="contact-card">
+            <h2>Call Us</h2>
+            <p>
+                <a href="tel:+2347036203666">+2347036203666</a>
+            </p>
+        </article>
 
-<p>
-    <strong>Email:</strong> shimnaessentials@gmail.com
-</p>
+        <article class="contact-card">
+            <h2>Email Us</h2>
+            <p>
+                <a href="mailto:shimnaessentials@gmail.com">
+                    shimnaessentials@gmail.com
+                </a>
+            </p>
+        </article>
+
+    </div>
+</section>
 
 {% endblock %}
