@@ -14,7 +14,7 @@ from reportlab.platypus import (
 )
 from django.utils import timezone
 
-from .models import Order
+from store.models import Order
 
 
 def generate_order_pdf(order: Order) -> bytes:
