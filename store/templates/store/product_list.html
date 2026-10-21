@@ -7,11 +7,11 @@
 <section class="catalogue">
     <div class="catalogue-heading">
         {% if category %}
-            <p class="eyebrow">EXPLORE OUR COLLECTION</p>
-            <h1>{{ category.name }}</h1>
+        <p class="eyebrow">EXPLORE OUR COLLECTION</p>
+        <h1>{{ category.name }}</h1>
         {% else %}
-            <p class="eyebrow">STYLE. TASTE. ESSENTIALS.</p>
-            <h1>Discover Our Collection</h1>
+        <p class="eyebrow">STYLE. TASTE. ESSENTIALS.</p>
+        <h1>Discover Our Collection</h1>
         {% endif %}
 
         <p class="catalogue-intro">
@@ -21,56 +21,50 @@
 
     <div class="product-grid">
         {% for product in products %}
-            <article class="product-card">
-                <a
-                    class="product-image-link"
-                    href="{% url 'product_detail' product.id %}"
-                    aria-label="View {{ product.name }}"
-                >
-                    {% if product.image %}
-                        <img
-                            class="product-image"
-                            src="{{ product.image.url }}"
-                            alt="{{ product.name }}"
-                        >
-                    {% else %}
-                        <div class="product-image-placeholder">
-                            <span>SHIMA ESSENTIALS</span>
-                        </div>
-                    {% endif %}
-                </a>
+        <article class="product-card">
+            <a class="product-image-link" href="{% url 'product_detail' product.id %}"
+                aria-label="View {{ product.name }}">
+                {% if product.image %}
+                <img class="product-image" src="{{ product.image.url }}" alt="{{ product.name }}">
+                {% else %}
+                <div class="product-image-placeholder">
+                    <span>SHIMA ESSENTIALS</span>
+                </div>
+                {% endif %}
+            </a>
 
-                <div class="product-card-content">
-                    <h2>
-                        <a
-                            class="product-name"
-                            href="{% url 'product_detail' product.id %}"
-                        >
-                            {{ product.name }}
-                        </a>
-                    </h2>
+            <div class="product-card-content">
+                <h2>
+                    <a class="product-name" href="{% url 'product_detail' product.id %}">
+                        {{ product.name }}
+                    </a>
+                </h2>
 
-                    <p class="product-description">
-                        {{ product.description }}
-                    </p>
+                <p class="product-description">
+                    {{ product.description }}
+                </p>
 
-                    <p class="product-price">
-                        ₦{{ product.price|floatformat:2 }}
-                    </p>
-
-                    <a
-                        class="button button-primary"
-                        href="{% url 'product_detail' product.id %}"
-                    >
+                <p class="product-price">
+                    ₦{{ product.price|floatformat:2 }}
+                </p>
+                <div class="product-card-actions">
+                    <a class="button button-primary" href="{% url 'product_detail' product.id %}">
                         View Product
                     </a>
+                    <form method="post" action="{% url 'cart_add' product.id %}">
+                        {% csrf_token %}
+                        <button class="button button-primary" type="submit">
+                            Add to Cart
+                        </button>
+                    </form>
                 </div>
-            </article>
-        {% empty %}
-            <div class="empty-state">
-                <h2>No products available yet</h2>
-                <p>Please check back soon for something special.</p>
             </div>
+        </article>
+        {% empty %}
+        <div class="empty-state">
+            <h2>No products available yet</h2>
+            <p>Please check back soon for something special.</p>
+        </div>
         {% endfor %}
     </div>
 </section>

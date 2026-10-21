@@ -1179,3 +1179,37 @@ a:focus-visible {
         font-size: 1.1rem;
     }
 }
+
+.product-card-actions {
+    display: flex;
+    align-items: stretch;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.product-card-actions > a,
+.product-card-actions > form {
+    flex: 1;
+    min-width: 0;
+}
+
+.product-card-actions > a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.product-card-actions > form {
+    display: flex;
+}
+
+.product-card-actions button {
+    width: 100%;
+}
+
+.product-card-actions .button {
+    box-sizing: border-box;
+    padding: 10px 8px;
+    font-size: 14px;
+}
